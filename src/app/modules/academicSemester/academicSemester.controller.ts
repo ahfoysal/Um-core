@@ -6,6 +6,7 @@ import { AcademicSemester } from '@prisma/client';
 
 import httpStatus from 'http-status';
 import pick from '../../../shared/pick';
+import { academicSemesterFilterableFields } from './academicSemester.constant';
 
 const createAcademicSemester: RequestHandler = catchAsync(async (req: Request, res: Response) => {
   const result = await AcademicSemesterService.createAcademicSemester(req.body);
@@ -18,7 +19,7 @@ const createAcademicSemester: RequestHandler = catchAsync(async (req: Request, r
   });
 });
 const getAllAcademicSemesters: RequestHandler = catchAsync(async (req: Request, res: Response) => {
-  const filters = pick(req.query, ['searchTerm', 'code', 'year']);
+  const filters = pick(req.query, academicSemesterFilterableFields);
   const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
 
   const { data, meta } = await AcademicSemesterService.getAllAcademicSemesters(filters, options);
@@ -31,8 +32,21 @@ const getAllAcademicSemesters: RequestHandler = catchAsync(async (req: Request, 
     meta
   });
 });
+const getSingleAcademicSemester: RequestHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await AcademicSemesterService.getSingleAcademicSemester(req.params.id);
+
+    sendResponse<AcademicSemester | null>(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Academic semester created  successfully!',
+      data: result
+    });
+  }
+);
 
 export const AcademicSemesterController = {
   createAcademicSemester,
-  getAllAcademicSemesters
+  getAllAcademicSemesters,
+  getSingleAcademicSemester
 };

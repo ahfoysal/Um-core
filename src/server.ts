@@ -2,8 +2,10 @@ import { Server } from 'http';
 import app from './app';
 import config from './config';
 import logger from './shared/logger';
-
-
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient({
+  errorFormat: 'minimal'
+});
 async function bootstrap() {
   const server: Server = app.listen(config.port, () => {
     logger.info(`Server running on port ${config.port}`);
@@ -37,3 +39,4 @@ async function bootstrap() {
 }
 
 bootstrap();
+export default prisma;
