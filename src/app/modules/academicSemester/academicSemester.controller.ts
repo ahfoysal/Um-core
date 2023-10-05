@@ -5,6 +5,7 @@ import { AcademicSemesterService } from './academicSemester.service';
 import { AcademicSemester } from '@prisma/client';
 
 import httpStatus from 'http-status';
+import pick from '../../../shared/pick';
 
 const createAcademicSemester: RequestHandler = catchAsync(async (req: Request, res: Response) => {
   const result = await AcademicSemesterService.createAcademicSemester(req.body);
@@ -17,7 +18,10 @@ const createAcademicSemester: RequestHandler = catchAsync(async (req: Request, r
   });
 });
 const getAllAcademicSemesters: RequestHandler = catchAsync(async (req: Request, res: Response) => {
-  const { data, meta } = await AcademicSemesterService.getAllAcademicSemesters();
+  const filters = pick(req.query, ['searchTerm', 'code', 'year']);
+  const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
+
+  const { data, meta } = await AcademicSemesterService.getAllAcademicSemesters(filters, options);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
